@@ -13,4 +13,6 @@ app.MapGet("/", () => "Communication with gRPC endpoints must be made through a 
 
 app.MapGrpcService<CustomerService>();
 
+app.MapGrpcService<ProductInfoService>();
+
 app.Run();
