@@ -1,4 +1,3 @@
-using System;
 using Grpc.Core;
 using GrpcServer.Protos;
 
@@ -13,7 +12,8 @@ public class CustomerService : Customer.CustomerBase
         _logger = logger;
     }
 
-    public override Task<CustomerModel> GetCustomerInfo(CustomerLookUpModel request, ServerCallContext context)
+    public override Task<CustomerModel> GetCustomerInfo(CustomerLookUpModel request,
+        ServerCallContext context)
     {
         CustomerModel customer = new CustomerModel();
 
@@ -38,5 +38,46 @@ public class CustomerService : Customer.CustomerBase
             customer.IsActive = true;
         }
         return Task.FromResult(customer);
+    }
+
+    public override async Task GetNewCustomers(NewCustomerRequest request,
+        IServerStreamWriter<CustomerModel> responseStream, ServerCallContext context)
+    {
+        List<CustomerModel> customers = new List<CustomerModel>
+        {
+            new CustomerModel
+            {
+                FirstName = "Shinei",
+                LastName = "Nouzen",
+                Email="@.com",
+                PhoneNumber="123-456-7890",
+                Age=20,
+                IsActive=true
+            },
+            new CustomerModel
+            {
+                FirstName = "Shri",
+                LastName = "Ram",
+                Email="@.com",
+                PhoneNumber="123-456-7890",
+                Age=23,
+                IsActive=true
+            },
+            new CustomerModel
+            {
+                FirstName = "Solo",
+                LastName = "bro",
+                Email="@.com",
+                PhoneNumber="123-456-7890",
+                Age=40,
+                IsActive=true
+            },
+
+        };
+        foreach (var customer in customers)
+        {
+            await Task.Delay(1000);
+            await responseStream.WriteAsync(customer);
+        }
     }
 }
